@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Toolis</string>
+    <string name="create_fab">CREATE</string>
+    <string-array name="sastra_category">
+        <item>Puisi</item>
+        <item>Pantun</item>
+        <item>Cerpen</item>
+    </string-array>
+</resources>
