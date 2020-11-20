@@ -1,9 +1,24 @@
 <resources>
     <string name="app_name">Toolis</string>
-    <string name="create_fab">CREATE</string>
+
+    <string name="sastra">Writings</string>
+    <string name="notes">Notes</string>
+
+    <string name="title">Title</string>
+    <string name="priority">Priority</string>
+    <string name="category">Category</string>
+    <string name="pitch">Pitch</string>
+    <string name="speed">Speed</string>
+    <string name="tts">Read for me</string>
+    <string name="summary">Summary</string>
+    <string name="sastra_content">Write here</string>
+    <string name="note_content">Your Notes</string>
+
+
     <string-array name="sastra_category">
         <item>Puisi</item>
         <item>Pantun</item>
         <item>Cerpen</item>
     </string-array>
+    <!-- TODO: Remove or change this placeholder text -->
 </resources>

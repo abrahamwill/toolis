@@ -95,4 +95,5 @@ public class NoteAdapter extends ListAdapter<Note, NoteAdapter.NoteHolder> {
     public void setOnItemClickListener(OnItemClickListener listener){
         this.listener = listener;
     }
+
 }

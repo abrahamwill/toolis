@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Toolis</string>
+    <string name="sastra">Sastra</string>
+    <string name="notes">Catatan</string>
+    <string name="title">Judul</string>
+    <string name="priority">Prioritas</string>
+    <string name="category">Kategori</string>
+    <string name="pitch">Nada</string>
+    <string name="speed">Kecepatan</string>
+    <string name="tts">Bacakan untukku</string>
+    <string name="summary">Ringkasan</string>
+    <string name="sastra_content">Tulis disini</string>
+    <string name="note_content">Catatanmu</string>
+</resources>

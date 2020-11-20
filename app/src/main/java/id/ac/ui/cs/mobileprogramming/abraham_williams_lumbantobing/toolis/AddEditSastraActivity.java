@@ -14,8 +14,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -72,6 +70,8 @@ public class AddEditSastraActivity extends AppCompatActivity {
         editTextDescription = findViewById(R.id.edit_text_description_sastra);
         numberPickerPriority = findViewById(R.id.number_picker_priority_sastra);
         spinnerCategory = (Spinner) findViewById(R.id.spinner_category_sastra);
+        mSeekBarPitch = findViewById(R.id.seek_bar_pitch_sastra);
+        mSeekBarSpeed = findViewById(R.id.seek_bar_speed_sastra);
 
         numberPickerPriority.setMinValue(1);
         numberPickerPriority.setMaxValue(10);
@@ -98,10 +98,16 @@ public class AddEditSastraActivity extends AppCompatActivity {
         Intent intent = getIntent();
 
         if (intent.hasExtra(EXTRA_ID)){
-            setTitle("Edit SASTRA");
+            setTitle("Edit Sastra");
+            coverImage.setImageBitmap(BitmapFactory.decodeFile(intent.getStringExtra(EXTRA_COVER)));
             editTextTitle.setText(intent.getStringExtra(EXTRA_TITLE));
             editTextSummary.setText(intent.getStringExtra(EXTRA_SUMMARY));
+            editTextDescription.setText(intent.getStringExtra(EXTRA_DESCRIPTION));
             numberPickerPriority.setValue(intent.getIntExtra(EXTRA_PRIORITY, 1));
+            String compareValue = intent.getStringExtra(EXTRA_CATEGORY);
+            spinnerCategory.setSelection(getIndex(spinnerCategory, compareValue));
+
+            //private method of your class
         } else{
             setTitle("Add Sastra");
         }
@@ -125,14 +131,22 @@ public class AddEditSastraActivity extends AppCompatActivity {
             }
         });
 
-        mSeekBarPitch = findViewById(R.id.seek_bar_pitch);
-        mSeekBarSpeed = findViewById(R.id.seek_bar_speed);
+
         mButtonSpeak.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 speak();
             }
         });
+    }
+
+    private int getIndex(Spinner spinner, String myString){
+        for (int i=0;i<spinner.getCount();i++){
+            if (spinner.getItemAtPosition(i).toString().equalsIgnoreCase(myString)){
+                return i;
+            }
+        }
+        return 0;
     }
 
     private void saveSastra() {
@@ -186,7 +200,7 @@ public class AddEditSastraActivity extends AppCompatActivity {
     }
 
     private void speak() {
-        String text = editTextSummary.getText().toString();
+        String text = editTextDescription.getText().toString();
         float pitch = (float) mSeekBarPitch.getProgress() / 50;
         if (pitch < 0.1) pitch = 0.1f;
         float speed = (float) mSeekBarSpeed.getProgress() / 50;

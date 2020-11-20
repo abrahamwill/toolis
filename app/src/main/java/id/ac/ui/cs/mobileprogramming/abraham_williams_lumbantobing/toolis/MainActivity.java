@@ -14,6 +14,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -74,10 +75,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
-        //sastra
         RecyclerView sastraRecyclerView = findViewById(R.id.sastra_recycler_view);
-        sastraRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
+            sastraRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        }else{
+            sastraRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        }
+        //sastra
+
+
         sastraRecyclerView.setHasFixedSize(true);
 
         final SastraAdapter sastraAdapter = new SastraAdapter();
@@ -110,8 +116,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,
-                ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
                 return false;
@@ -123,6 +128,20 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "Note Deleted", Toast.LENGTH_SHORT).show();
             }
         }).attachToRecyclerView(noteRecyclerView);
+
+        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,
+                ItemTouchHelper.UP) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                sastraViewModel.delete(sastraAdapter.getSastraAt(viewHolder.getAdapterPosition()));
+                Toast.makeText(MainActivity.this, "Sastra Deleted", Toast.LENGTH_SHORT).show();
+            }
+        }).attachToRecyclerView(sastraRecyclerView);
 
         noteAdapter.setOnItemClickListener(new NoteAdapter.OnItemClickListener() {
             @Override
@@ -146,6 +165,7 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra(AddEditSastraActivity.EXTRA_SUMMARY, sastra.getSummary());
                 intent.putExtra(AddEditSastraActivity.EXTRA_DESCRIPTION, sastra.getDescription());
                 intent.putExtra(AddEditSastraActivity.EXTRA_PRIORITY, sastra.getPriority());
+                intent.putExtra(AddEditSastraActivity.EXTRA_CATEGORY, sastra.getCategory());
                 startActivityForResult(intent, EDIT_SASTRA_REQUEST);
             }
         });
@@ -260,4 +280,5 @@ public class MainActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
+
 }
