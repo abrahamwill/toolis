@@ -13,7 +13,6 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 public abstract class NoteDatabase extends RoomDatabase {
 
     private static NoteDatabase instance;
-
     public abstract NoteDao noteDao();
 
     public static synchronized NoteDatabase getInstance(Context context){
@@ -44,9 +43,6 @@ public abstract class NoteDatabase extends RoomDatabase {
 
         @Override
         protected Void doInBackground(Void... voids) {
-//            noteDao.insert(new Note("First Note", "This is Description 1", 1));
-//            noteDao.insert(new Note("Second Note", "This is Description 2", 2));
-//            noteDao.insert(new Note("Third Note", "This is Description 3", 3));
             return null;
         }
     }
