@@ -5,13 +5,10 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
@@ -23,7 +20,6 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 
 import java.util.List;
 
@@ -32,11 +28,15 @@ public class MainActivity extends AppCompatActivity {
     public static final int EDIT_NOTE_REQUEST = 2;
     public static final int ADD_SASTRA_REQUEST = 3;
     public static final int EDIT_SASTRA_REQUEST = 4;
+    public static final int ADD_IMAGENOTE_REQUEST = 5;
+    public static final int EDIT_IMAGENOTE_REQUEST = 6;
     private NoteViewModel noteViewModel;
     private SastraViewModel sastraViewModel;
+    private ImageNoteViewModel imageNoteViewModel;
+
 
     private Boolean isFABOpen = false;
-    FloatingActionButton fab, addNoteFab, addSastraFab;
+    FloatingActionButton fab, addNoteFab, addSastraFab, addImageNoteFab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
         fab = findViewById(R.id.button_add);
         addNoteFab = findViewById(R.id.button_add_note);
         addSastraFab = findViewById(R.id.button_add_sastra);
+        addImageNoteFab = findViewById(R.id.button_add_imageNote);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -75,15 +76,25 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        addImageNoteFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, AddEditImageNoteActivity.class);
+                startActivityForResult(intent, ADD_IMAGENOTE_REQUEST);
+            }
+        });
+
+
+
         RecyclerView sastraRecyclerView = findViewById(R.id.sastra_recycler_view);
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
             sastraRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         }else{
             sastraRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         }
+
+
         //sastra
-
-
         sastraRecyclerView.setHasFixedSize(true);
 
         final SastraAdapter sastraAdapter = new SastraAdapter();
@@ -93,8 +104,23 @@ public class MainActivity extends AppCompatActivity {
         sastraViewModel.getAllSastra().observe(this, new Observer<List<Sastra>>() {
             @Override
             public void onChanged(List<Sastra> sastras) {
-//                adapter.setNotes(notes); deprecated
                 sastraAdapter.submitList(sastras); // punya listAdapter
+            }
+        });
+
+        //ImageNote
+        RecyclerView imageNoteRecyclerView = findViewById(R.id.imageNote_recycler_view);
+        imageNoteRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        imageNoteRecyclerView.setHasFixedSize(true);
+
+        final ImageNoteAdapter imageNoteAdapter = new ImageNoteAdapter();
+        imageNoteRecyclerView.setAdapter(imageNoteAdapter);
+
+        imageNoteViewModel = new ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(this.getApplication())).get(ImageNoteViewModel.class);
+        imageNoteViewModel.getAllImageNotes().observe(this, new Observer<List<ImageNote>>() {
+            @Override
+            public void onChanged(List<ImageNote> imageNotes) {
+                imageNoteAdapter.submitList(imageNotes); // punya listAdapter
             }
         });
 
@@ -111,7 +137,6 @@ public class MainActivity extends AppCompatActivity {
         noteViewModel.getAllNotes().observe(this, new Observer<List<Note>>() {
             @Override
             public void onChanged(List<Note> notes) {
-//                adapter.setNotes(notes); deprecated
                 noteAdapter.submitList(notes); // punya listAdapter
             }
         });
@@ -129,8 +154,16 @@ public class MainActivity extends AppCompatActivity {
             }
         }).attachToRecyclerView(noteRecyclerView);
 
+        int direction = 0;
+
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
+            direction = ItemTouchHelper.LEFT;
+        }else{
+            direction = ItemTouchHelper.UP;
+        }
+
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,
-                ItemTouchHelper.UP) {
+                direction) {
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
                 return false;
@@ -142,6 +175,22 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "Sastra Deleted", Toast.LENGTH_SHORT).show();
             }
         }).attachToRecyclerView(sastraRecyclerView);
+
+        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,
+                ItemTouchHelper.UP) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                imageNoteViewModel.delete(imageNoteAdapter.getImageNoteAt(viewHolder.getAdapterPosition()));
+                Toast.makeText(MainActivity.this, "Image Note Deleted", Toast.LENGTH_SHORT).show();
+            }
+        }).attachToRecyclerView(imageNoteRecyclerView);
+
+
 
         noteAdapter.setOnItemClickListener(new NoteAdapter.OnItemClickListener() {
             @Override
@@ -170,6 +219,17 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        imageNoteAdapter.setOnItemClickListener(new ImageNoteAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(ImageNote imageNote) {
+                Intent intent = new Intent(MainActivity.this, AddEditImageNoteActivity.class);
+                intent.putExtra(AddEditImageNoteActivity.EXTRA_ID, imageNote.getId());
+                intent.putExtra(AddEditImageNoteActivity.EXTRA_TITLE, imageNote.getTitle());
+                intent.putExtra(AddEditImageNoteActivity.EXTRA_IMAGE, imageNote.getImage());
+                startActivityForResult(intent, EDIT_IMAGENOTE_REQUEST);
+            }
+        });
+
         ConnectivityBroadcastReceiver connReceiver = new ConnectivityBroadcastReceiver();
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
@@ -182,12 +242,14 @@ public class MainActivity extends AppCompatActivity {
         isFABOpen=true;
         addNoteFab.animate().translationY(-getResources().getDimension(R.dimen.standard_65));
         addSastraFab.animate().translationY(-getResources().getDimension(R.dimen.standard_125));
+        addImageNoteFab.animate().translationY(-getResources().getDimension(R.dimen.standard_185));
     }
 
     private void closeFABMenu(){
         isFABOpen=false;
         addNoteFab.animate().translationY(0);
         addSastraFab.animate().translationY(0);
+        addImageNoteFab.animate().translationY(0);
     }
 
     @Override
@@ -252,7 +314,30 @@ public class MainActivity extends AppCompatActivity {
             sastraViewModel.update(sastra);
 
             Toast.makeText(this, "Sastra saved", Toast.LENGTH_SHORT).show();
-        } else {
+        } else if (requestCode == ADD_IMAGENOTE_REQUEST && resultCode == RESULT_OK) {
+            String title = data.getStringExtra(AddEditImageNoteActivity.EXTRA_TITLE);
+            String image = data.getStringExtra((AddEditImageNoteActivity.EXTRA_IMAGE));
+
+            ImageNote imageNote = new ImageNote(title,image,1);
+            imageNoteViewModel.insert(imageNote);
+
+            Toast.makeText(this, "Image Note saved", Toast.LENGTH_SHORT).show();
+        } else if (requestCode == EDIT_IMAGENOTE_REQUEST && resultCode == RESULT_OK){
+            int id = data.getIntExtra(AddEditImageNoteActivity.EXTRA_ID, -1);
+
+            if (id == -1) {
+                Toast.makeText(this, "Error, can't update Image Note", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            String title = data.getStringExtra(AddEditImageNoteActivity.EXTRA_TITLE);
+            String image = data.getStringExtra((AddEditImageNoteActivity.EXTRA_IMAGE));
+
+            ImageNote imageNote = new ImageNote(title,image,1);
+            imageNote.setId(id);
+            imageNoteViewModel.update(imageNote);
+
+        }else {
             Toast.makeText(this, "Sastra Unsaved", Toast.LENGTH_SHORT).show();
         }
 
@@ -275,6 +360,10 @@ public class MainActivity extends AppCompatActivity {
             case R.id.delete_all_sastra:
                 sastraViewModel.deleteAllSastra();
                 Toast.makeText(this, "All sastra deleted", Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.delete_all_imageNotes:
+                imageNoteViewModel.deleteAllImageNotes();
+                Toast.makeText(this, "All image notes deleted", Toast.LENGTH_SHORT).show();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

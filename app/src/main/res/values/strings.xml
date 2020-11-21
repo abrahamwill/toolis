@@ -3,6 +3,7 @@
 
     <string name="sastra">Writings</string>
     <string name="notes">Notes</string>
+    <string name="imageNote">Image Notes</string>
 
     <string name="title">Title</string>
     <string name="priority">Priority</string>
@@ -13,12 +14,18 @@
     <string name="summary">Summary</string>
     <string name="sastra_content">Write here</string>
     <string name="note_content">Your Notes</string>
+    <string name="add_sastra">Add Sastra</string>
+    <string name="edit_sastra">Edit Sastra</string>
+    <string name="add_note">Add Note</string>
+    <string name="edit_note">Edit Note</string>
+    <string name="add_imageNote">Add Image Note</string>
+    <string name="edit_imageNote">Edit Image Note</string>
 
 
     <string-array name="sastra_category">
-        <item>Puisi</item>
+        <item>Poems</item>
         <item>Pantun</item>
-        <item>Cerpen</item>
+        <item>Story</item>
     </string-array>
     <!-- TODO: Remove or change this placeholder text -->
 </resources>

@@ -35,6 +35,8 @@
             android:parentActivityName=".MainActivity"></activity>
         <activity android:name=".AddEditSastraActivity"
             android:parentActivityName=".MainActivity"></activity>
+        <activity android:name=".AddEditImageNoteActivity"
+            android:parentActivityName=".MainActivity"></activity>
 
 
     </application>

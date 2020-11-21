@@ -23,8 +23,20 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/sastra_recycler_view"
             android:layout_width="match_parent"
-            android:layout_height="308dp"
+            android:layout_height="280dp"
             tools:listitem="@layout/sastra_item" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/imageNote"
+            android:paddingBottom="4dp"></TextView>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/imageNote_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            tools:listitem="@layout/imagenote_item" />
 
         <TextView
             android:layout_width="match_parent"
@@ -39,6 +51,15 @@
             tools:listitem="@layout/note_item" />
 
     </LinearLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/button_add_imageNote"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="38dp"
+        android:src="@drawable/ic_baseline_image_16"
+        app:fabCustomSize="44dp" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/button_add_sastra"

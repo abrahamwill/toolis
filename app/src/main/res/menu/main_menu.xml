@@ -9,4 +9,8 @@
         android:id="@+id/delete_all_sastra"
         android:title="Delete All Sastra"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/delete_all_imageNotes"
+        android:title="Delete All Image Notes"
+        app:showAsAction="never" />
 </menu>

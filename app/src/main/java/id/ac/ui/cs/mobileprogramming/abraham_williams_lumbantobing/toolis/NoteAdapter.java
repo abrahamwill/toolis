@@ -28,9 +28,7 @@ public class NoteAdapter extends ListAdapter<Note, NoteAdapter.NoteHolder> {
 
         @Override
         public boolean areContentsTheSame(@NonNull Note oldItem, @NonNull Note newItem) {
-            return oldItem.getTitle().equals(newItem.getTitle()) &&
-                    oldItem.getDescription().equals(newItem.getDescription()) &&
-                    oldItem.getPriority() == (newItem.getPriority());
+            return false;
         }
     };
 
@@ -49,17 +47,6 @@ public class NoteAdapter extends ListAdapter<Note, NoteAdapter.NoteHolder> {
         holder.textViewDescription.setText(currentNote.getDescription());
         holder.textViewPriority.setText(String.valueOf(currentNote.getPriority()));
     }
-
-// di handle super (listadapter)
-//    @Override
-//    public int getItemCount() {
-//        return notes.size();
-//    }
-//
-//    public void setNotes(List<Note> notes) {
-//        this.notes = notes;
-//        notifyDataSetChanged();
-//    }
 
     public Note getNoteAt(int position){
         return getItem(position);  //method list adapter

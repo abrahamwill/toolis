@@ -3,6 +3,8 @@
     <string name="app_name">Toolis</string>
     <string name="sastra">Sastra</string>
     <string name="notes">Catatan</string>
+    <string name="imageNote">Catatan Gambar</string>
+
     <string name="title">Judul</string>
     <string name="priority">Prioritas</string>
     <string name="category">Kategori</string>
@@ -12,4 +14,16 @@
     <string name="summary">Ringkasan</string>
     <string name="sastra_content">Tulis disini</string>
     <string name="note_content">Catatanmu</string>
+    <string name="add_sastra">Tambah Sastra</string>
+    <string name="edit_sastra">Edit Sastra</string>
+    <string name="add_note">Tambah Catatan</string>
+    <string name="edit_note">Edit Catatan</string>
+
+    <string-array name="sastra_category">
+        <item>Puisi</item>
+        <item>Pantun</item>
+        <item>Cerpen</item>
+    </string-array>
+    <string name="add_imageNote">Tambah Catatan Gambar</string>
+    <string name="edit_imageNote">Edit Catatan Gambar</string>
 </resources>

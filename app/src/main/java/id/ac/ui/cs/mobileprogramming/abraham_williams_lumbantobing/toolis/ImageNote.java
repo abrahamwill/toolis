@@ -3,21 +3,21 @@ package id.ac.ui.cs.mobileprogramming.abraham_williams_lumbantobing.toolis;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-@Entity(tableName = "note_table")
-public class Note {
+@Entity(tableName = "imageNote_table")
+public class ImageNote {
 
     @PrimaryKey(autoGenerate = true)
     private int id;
 
     private String title;
 
-    private String description;
+    private String image;
 
     private int priority;
 
-    public Note(String title, String description, int priority) {
+    public ImageNote(String title, String image, int priority) {
         this.title = title;
-        this.description = description;
+        this.image = image;
         this.priority = priority;
     }
 
@@ -29,13 +29,14 @@ public class Note {
         return id;
     }
 
+    public String getImage() {
+        return image;
+    }
+
     public String getTitle() {
         return title;
     }
 
-    public String getDescription() {
-        return description;
-    }
 
     public int getPriority() {
         return priority;

@@ -30,13 +30,7 @@ public class SastraAdapter extends ListAdapter<Sastra, SastraAdapter.SastraHolde
 
         @Override
         public boolean areContentsTheSame(@NonNull Sastra oldItem, @NonNull Sastra newItem) {
-//            return oldItem.getTitle().equals(newItem.getTitle()) &&
-//                    oldItem.getSummary().equals(newItem.getSummary()) &&
-//                    oldItem.getCover().equals(newItem.getCover()) &&
-//                    oldItem.getCategory().equals(newItem.getCategory()) &&
-//                    oldItem.getDescription().equals(newItem.getDescription()) &&
-//                    oldItem.getPriority() == newItem.getPriority()
-                    return false;
+            return false;
         }
 
     };
@@ -58,17 +52,6 @@ public class SastraAdapter extends ListAdapter<Sastra, SastraAdapter.SastraHolde
         holder.textViewSummary.setText(currentSastra.getSummary());
         holder.imageViewCover.setImageBitmap(BitmapFactory.decodeFile(currentSastra.getCover()));
     }
-
-// di handle super (listadapter)
-//    @Override
-//    public int getItemCount() {
-//        return sastra.size();
-//    }
-//
-//    public void setSastra(List<Sastra> sastra) {
-//        this.sastra = sastra;
-//        notifyDataSetChanged();
-//    }
 
     public Sastra getSastraAt(int position){
         return getItem(position);  //method list adapter
