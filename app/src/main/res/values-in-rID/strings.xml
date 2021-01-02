@@ -26,4 +26,5 @@
     </string-array>
     <string name="add_imageNote">Tambah Catatan Gambar</string>
     <string name="edit_imageNote">Edit Catatan Gambar</string>
+    <string name="button_count_words">Hitung Kata</string>
 </resources>

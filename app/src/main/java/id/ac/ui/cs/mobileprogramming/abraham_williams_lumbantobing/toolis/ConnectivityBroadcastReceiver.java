@@ -30,4 +30,14 @@ public class ConnectivityBroadcastReceiver extends BroadcastReceiver {
         }
     }
 
+    public Boolean isNetworkAvailable(Context context){
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        if(networkInfo!=null){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
 }

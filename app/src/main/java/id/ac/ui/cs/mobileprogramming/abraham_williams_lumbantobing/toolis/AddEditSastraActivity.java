@@ -1,6 +1,8 @@
 package id.ac.ui.cs.mobileprogramming.abraham_williams_lumbantobing.toolis;
 
 import android.Manifest;
+import android.app.Notification;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -9,6 +11,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.speech.tts.TextToSpeech;
+import android.speech.tts.UtteranceProgressListener;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,13 +23,21 @@ import android.widget.ImageView;
 import android.widget.NumberPicker;
 import android.widget.SeekBar;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
 import java.util.Locale;
+
+import static id.ac.ui.cs.mobileprogramming.abraham_williams_lumbantobing.toolis.App.CHANNEL_1_ID;
+
+
 
 public class AddEditSastraActivity extends AppCompatActivity {
     public static final String EXTRA_ID =
@@ -55,14 +66,44 @@ public class AddEditSastraActivity extends AppCompatActivity {
     private SeekBar mSeekBarPitch;
     private SeekBar mSeekBarSpeed;
     private Button mButtonSpeak;
-
+    private Button countWordsButton;
     private String picturePath;
     private static int RESULT_LOAD_IMAGE = 1;
 
+    //notif
+    private NotificationManagerCompat notificationManager;
+
+
+    public void sendOnChannel1() {
+        Log.e("notif", "masuk channel 1");
+        Log.e("channel id", CHANNEL_1_ID);
+        String title = "Sastra telah selesai dibacakan!";
+        String message = "Silahkan masuk ke aplikasi dan pilih sastra lain untuk mulai membaca";
+        Notification notification = new NotificationCompat.Builder(this, CHANNEL_1_ID)
+                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setContentTitle(title)
+                .setContentText(message)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+                .build();
+        notificationManager.notify(1, notification);
+        Log.e("notif", "selesai di notify");
+    }
+    //notif
+
+    static {
+        System.loadLibrary("cpp_code");
+    }
+
+    public native String simplefun(String text);
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_sastra);
+
+        notificationManager = NotificationManagerCompat.from(this);
 
         coverImage = findViewById(R.id.edit_cover_sastra);
         editTextTitle = findViewById(R.id.edit_text_title_sastra);
@@ -78,10 +119,20 @@ public class AddEditSastraActivity extends AppCompatActivity {
 
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_white_24dp);
 
+        countWordsButton = findViewById(R.id.button_count_words);
+        countWordsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TextView word_count= findViewById(R.id.word_count);
+                word_count.setText(simplefun(editTextDescription.getText().toString()));
+            }
+        });
+
         coverImage.setOnClickListener(arg0 -> {
             try {
                 if (ActivityCompat.checkSelfPermission(AddEditSastraActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(AddEditSastraActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, RESULT_LOAD_IMAGE);
+                    requestStoragePermission();
+//                    ActivityCompat.requestPermissions(AddEditSastraActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, RESULT_LOAD_IMAGE);
                 } else {
                     Intent i = new Intent(
                             Intent.ACTION_PICK,
@@ -94,8 +145,10 @@ public class AddEditSastraActivity extends AppCompatActivity {
             }
         });
 
+
         //edit sastra
         Intent intent = getIntent();
+
 
         if (intent.hasExtra(EXTRA_ID)){
             setTitle("Edit Sastra");
@@ -125,6 +178,22 @@ public class AddEditSastraActivity extends AppCompatActivity {
                     } else {
                         mButtonSpeak.setEnabled(true);
                     }
+                    mTTS.setOnUtteranceProgressListener(new UtteranceProgressListener() {
+                        @Override
+                        public void onDone(String utteranceId) {
+                            Log.e("TTS", "masuk ondone");
+                            sendOnChannel1();
+                            Log.e("SastraActivity", "TTS finished");
+                        }
+
+                        @Override
+                        public void onError(String utteranceId) {
+                        }
+
+                        @Override
+                        public void onStart(String utteranceId) {
+                        }
+                    });
                 } else {
                     Log.e("TTS", "Initialization failed");
                 }
@@ -138,6 +207,43 @@ public class AddEditSastraActivity extends AppCompatActivity {
                 speak();
             }
         });
+    }
+
+    private void requestStoragePermission() {
+        if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                Manifest.permission.READ_EXTERNAL_STORAGE)) {
+            new AlertDialog.Builder(this)
+                    .setTitle("Permission needed")
+                    .setMessage("Kami membutuhkan permission ini untuk mengakses gambar yang akan digunakan sebagai cover sastra")
+                    .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            ActivityCompat.requestPermissions(AddEditSastraActivity.this,
+                                    new String[] {Manifest.permission.READ_EXTERNAL_STORAGE}, RESULT_LOAD_IMAGE);
+                        }
+                    })
+                    .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .create().show();
+        } else {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, RESULT_LOAD_IMAGE);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == RESULT_LOAD_IMAGE)  {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "Permission GRANTED", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "Permission DENIED", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     private int getIndex(Spinner spinner, String myString){
@@ -196,7 +302,6 @@ public class AddEditSastraActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
-
     }
 
     private void speak() {
@@ -207,8 +312,10 @@ public class AddEditSastraActivity extends AppCompatActivity {
         if (speed < 0.1) speed = 0.1f;
         mTTS.setPitch(pitch);
         mTTS.setSpeechRate(speed);
-        mTTS.speak(text, TextToSpeech.QUEUE_FLUSH, null);
+        mTTS.speak(text, TextToSpeech.QUEUE_FLUSH, null, TextToSpeech.ACTION_TTS_QUEUE_PROCESSING_COMPLETED);
     }
+
+
     @Override
     protected void onDestroy() {
         if (mTTS != null) {
@@ -217,6 +324,7 @@ public class AddEditSastraActivity extends AppCompatActivity {
         }
         super.onDestroy();
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -238,7 +346,10 @@ public class AddEditSastraActivity extends AppCompatActivity {
             Log.e("img", picturePath);
             Toast.makeText(this, "You have pick an image",
                     Toast.LENGTH_LONG).show();
-
         }
+
     }
+
+
+
 }

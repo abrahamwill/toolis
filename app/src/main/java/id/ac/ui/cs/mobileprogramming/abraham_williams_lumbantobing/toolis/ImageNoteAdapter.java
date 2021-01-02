@@ -2,6 +2,7 @@ package id.ac.ui.cs.mobileprogramming.abraham_williams_lumbantobing.toolis;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,9 +45,31 @@ public class ImageNoteAdapter extends ListAdapter<ImageNote, ImageNoteAdapter.Im
     @Override
     public void onBindViewHolder(@NonNull ImageNoteHolder holder, int position) {
 
+//        ImageNote currentImageNote = getItem(position); //method list adapter
+//
+//        holder.imageViewImage.setImageBitmap(BitmapFactory.decodeFile(currentImageNote.getImage()));
+
         ImageNote currentImageNote = getItem(position); //method list adapter
 
-        holder.imageViewImage.setImageBitmap(BitmapFactory.decodeFile(currentImageNote.getImage()));
+        if (currentImageNote.getImage() != null) {
+            Log.e("image", currentImageNote.getImage());
+
+            String currentImagePath = currentImageNote.getImage();
+
+            String checkHttp = currentImagePath.substring(0, 4);
+            Log.e("checkhttp", checkHttp);
+
+            if (checkHttp.equals("http")) {
+                Log.e("image", "masuk");
+
+                LoadImage loadImage = new LoadImage(holder.imageViewImage);
+                loadImage.execute(currentImageNote.getImage());
+            } else {
+                Log.e("image", "masuk2");
+                holder.imageViewImage.setImageBitmap(BitmapFactory.decodeFile(currentImageNote.getImage()));
+            }
+        }
+
     }
 
     public ImageNote getImageNoteAt(int position){

@@ -1,11 +1,16 @@
 package id.ac.ui.cs.mobileprogramming.abraham_williams_lumbantobing.toolis;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 
@@ -14,6 +19,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 
@@ -22,6 +29,11 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 
 public class AddEditImageNoteActivity extends AppCompatActivity {
@@ -35,9 +47,13 @@ public class AddEditImageNoteActivity extends AppCompatActivity {
 
     private EditText editTextTitle;
     private ImageView editImageImageNote;
+    private Button buttonCheckImageLink;
+    private EditText editImageLink;
 
     private String picturePath;
     private static int RESULT_LOAD_IMAGE = 1;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +63,7 @@ public class AddEditImageNoteActivity extends AppCompatActivity {
 
         editTextTitle = findViewById(R.id.edit_title_imageNote);
         editImageImageNote = findViewById(R.id.edit_image_imageNote);
+
 
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_white_24dp);
 
@@ -65,6 +82,30 @@ public class AddEditImageNoteActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         });
+
+        editImageLink = findViewById(R.id.edit_image_link);
+        buttonCheckImageLink = findViewById(R.id.button_check_image_link);
+
+
+        buttonCheckImageLink.setOnClickListener(v -> {
+            ConnectivityBroadcastReceiver cbc = new ConnectivityBroadcastReceiver();
+//            editImageImageNote.setImageBitmap(getBitmapFromURL(editImageLink.getText().toString()));
+            Context context = getApplicationContext();
+            if (!cbc.isNetworkAvailable(context)){
+                Toast.makeText(context,"network not available, can't use photo", Toast.LENGTH_LONG).show();
+            }
+            String urlLink  = editImageLink.getText().toString();
+            if (urlLink.isEmpty()){
+                Toast.makeText(getApplicationContext(),"Please enter url", Toast.LENGTH_SHORT).show();
+            }else {
+                LoadImage loadImage = new LoadImage(editImageImageNote);
+                loadImage.execute(urlLink);
+            }
+        });
+
+
+
+
 
         //edit imageNote
         Intent intent = getIntent();
@@ -86,6 +127,12 @@ public class AddEditImageNoteActivity extends AppCompatActivity {
         if (title.trim().isEmpty()) { //supaya ga bisa empty, coba remove empty spaces di end dan beginning
             Toast.makeText(this, "Please insert title", Toast.LENGTH_SHORT).show();
             return;
+        }
+
+        String urlLink = editImageLink.getText().toString();
+
+        if (picturePath==null & urlLink!=null){
+            picturePath = urlLink;
         }
 
         Intent data = new Intent();
@@ -125,6 +172,7 @@ public class AddEditImageNoteActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && null != data) {
@@ -144,7 +192,7 @@ public class AddEditImageNoteActivity extends AppCompatActivity {
             Log.e("img", picturePath);
             Toast.makeText(this, "You have pick an image",
                     Toast.LENGTH_LONG).show();
-
         }
     }
+
 }

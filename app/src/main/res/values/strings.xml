@@ -20,6 +20,7 @@
     <string name="edit_note">Edit Note</string>
     <string name="add_imageNote">Add Image Note</string>
     <string name="edit_imageNote">Edit Image Note</string>
+    <string name="button_count_words">Count Words</string>
 
 
     <string-array name="sastra_category">

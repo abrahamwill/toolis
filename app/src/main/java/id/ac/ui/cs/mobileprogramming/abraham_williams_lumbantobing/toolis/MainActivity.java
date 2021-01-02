@@ -3,6 +3,9 @@ package id.ac.ui.cs.mobileprogramming.abraham_williams_lumbantobing.toolis;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import android.app.Notification;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -33,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     private NoteViewModel noteViewModel;
     private SastraViewModel sastraViewModel;
     private ImageNoteViewModel imageNoteViewModel;
+
 
 
     private Boolean isFABOpen = false;
