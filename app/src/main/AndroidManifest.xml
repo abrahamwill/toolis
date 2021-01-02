@@ -39,6 +39,10 @@
         </activity>
         <activity android:name=".AddEditImageNoteActivity"
             android:parentActivityName=".MainActivity"></activity>
+        <activity android:name=".OpenGLActivity"
+            android:parentActivityName=".MainActivity">
+
+        </activity>
 
 
     </application>

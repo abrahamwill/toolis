@@ -80,7 +80,7 @@ public class AddEditSastraActivity extends AppCompatActivity {
         String title = "Sastra telah selesai dibacakan!";
         String message = "Silahkan masuk ke aplikasi dan pilih sastra lain untuk mulai membaca";
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_1_ID)
-                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setSmallIcon(R.drawable.ic_baseline_menu_book_16)
                 .setContentTitle(title)
                 .setContentText(message)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
@@ -212,23 +212,7 @@ public class AddEditSastraActivity extends AppCompatActivity {
     private void requestStoragePermission() {
         if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                 Manifest.permission.READ_EXTERNAL_STORAGE)) {
-            new AlertDialog.Builder(this)
-                    .setTitle("Permission needed")
-                    .setMessage("Kami membutuhkan permission ini untuk mengakses gambar yang akan digunakan sebagai cover sastra")
-                    .setPositiveButton("ok", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            ActivityCompat.requestPermissions(AddEditSastraActivity.this,
-                                    new String[] {Manifest.permission.READ_EXTERNAL_STORAGE}, RESULT_LOAD_IMAGE);
-                        }
-                    })
-                    .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    })
-                    .create().show();
+            showPermissionDialog();
         } else {
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, RESULT_LOAD_IMAGE);
@@ -242,10 +226,30 @@ public class AddEditSastraActivity extends AppCompatActivity {
                 Toast.makeText(this, "Permission GRANTED", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(this, "Permission DENIED", Toast.LENGTH_SHORT).show();
+                showPermissionDialog();
             }
         }
     }
 
+    private void showPermissionDialog(){
+        new AlertDialog.Builder(this)
+                .setTitle("Permission needed")
+                .setMessage("Kami membutuhkan permission ini untuk mengakses gambar yang akan digunakan sebagai cover sastra")
+                .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        ActivityCompat.requestPermissions(AddEditSastraActivity.this,
+                                new String[] {Manifest.permission.READ_EXTERNAL_STORAGE}, RESULT_LOAD_IMAGE);
+                    }
+                })
+                .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .create().show();
+    }
     private int getIndex(Spinner spinner, String myString){
         for (int i=0;i<spinner.getCount();i++){
             if (spinner.getItemAtPosition(i).toString().equalsIgnoreCase(myString)){

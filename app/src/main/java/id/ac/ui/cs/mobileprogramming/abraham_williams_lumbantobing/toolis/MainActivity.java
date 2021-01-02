@@ -369,6 +369,9 @@ public class MainActivity extends AppCompatActivity {
                 imageNoteViewModel.deleteAllImageNotes();
                 Toast.makeText(this, "All image notes deleted", Toast.LENGTH_SHORT).show();
                 return true;
+            case R.id.show_credit:
+                Intent intent = new Intent(MainActivity.this, OpenGLActivity.class);
+                startActivity(intent);
             default:
                 return super.onOptionsItemSelected(item);
         }

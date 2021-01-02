@@ -13,4 +13,9 @@
         android:id="@+id/delete_all_imageNotes"
         android:title="Delete All Image Notes"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/show_credit"
+        android:title="Show Credit"
+        app:showAsAction="never" />
 </menu>

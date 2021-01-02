@@ -5,7 +5,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
-public class Triangle {
+public class Shape {
 
     private final int mProgram;
     private int positionHandle;
@@ -14,7 +14,7 @@ public class Triangle {
 
     static final int COORDS_PER_VERTEX = 3;
 
-    private final int vertexCount = triangleCoords.length / COORDS_PER_VERTEX;
+    private final int vertexCount = shapeCoords.length / COORDS_PER_VERTEX;
     private final int vertexStride = COORDS_PER_VERTEX * 4; // 4 bytes per vertex
 
     private final String vertexShaderCode =
@@ -30,15 +30,29 @@ public class Triangle {
                     "  gl_FragColor = vColor;" +
                     "}";
     // membuat koordinat untuk bentuk segitiga
-    static float triangleCoords[] = {
-            -0.5f, 0.5f, 0.0f,
-            -0.2f, 0.0f, 0.0f,
-            -0.5f, -0.5f, 0.0f,
-            0.5f, -0.5f, 0.0f,
-            0.2f, 0.0f, 0.0f,
-            0.5f, 0.5f, 0.0f,
+    static float shapeCoords[] = {
+            0.7f, 0.9f, 0.0f,
+            -0.7f, 0.9f, 0.0f,
+            -0.4f, 0.6f, 0.0f,
+            0.7f, 0.9f, 0.0f,
+            -0.4f, 0.6f, 0.0f,
+            0.4f, 0.6f, 0.0f,
+            -0.4f, 0.6f, 0.0f,
+            0.4f, 0.6f, 0.0f,
+            -0.7f, 0.3f, 0.0f,
+            0.4f, 0.6f, 0.0f,
+            -0.7f, 0.3f, 0.0f,
+            0.7f, 0.3f, 0.0f,
 
+            -0.7f, -0.2f, 0.0f,
+            0.7f, -0.2f, 0.0f,
+            0.0f, -0.9f, 0.0f,
     };
+
+    public void setColor(float[] color) {
+        this.color = color;
+
+    }
 
     float color[] = { 1f, 0f, 0f, 1.0f };
 
@@ -50,10 +64,10 @@ public class Triangle {
         // get handle to vertex shader's vPosition member
         positionHandle = GLES20.glGetAttribLocation(mProgram, "vPosition");
 
-        // Enable a handle to the triangle vertices
+        // Enable a handle to the shape vertices
         GLES20.glEnableVertexAttribArray(positionHandle);
 
-        // Prepare the triangle coordinate data
+        // Prepare the shape coordinate data
         GLES20.glVertexAttribPointer(positionHandle, COORDS_PER_VERTEX,
                 GLES20.GL_FLOAT, false,
                 vertexStride, vertexBuffer);
@@ -64,14 +78,14 @@ public class Triangle {
         // Set color for drawing the triangle
         GLES20.glUniform4fv(colorHandle, 1, color, 0);
 
-        // Draw the triangle
+        // Draw the shape
         GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, vertexCount);
 
         // Disable vertex array
         GLES20.glDisableVertexAttribArray(positionHandle);
     }
 
-    public Triangle() {
+    public Shape() {
 
         int vertexShader = OpenGLRenderer.loadShader(GLES20.GL_VERTEX_SHADER,
                 vertexShaderCode);
@@ -91,12 +105,12 @@ public class Triangle {
         GLES20.glLinkProgram(mProgram);
 
         ByteBuffer bb = ByteBuffer.allocateDirect(
-                triangleCoords.length * 4);
+                shapeCoords.length * 4);
 
         bb.order(ByteOrder.nativeOrder());
         vertexBuffer = bb.asFloatBuffer();
 
-        vertexBuffer.put(triangleCoords);
+        vertexBuffer.put(shapeCoords);
         vertexBuffer.position(0);
     }
 }
